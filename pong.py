@@ -4,6 +4,7 @@
 from sre_parse import WHITESPACE
 from struct import pack
 from tkinter import LEFT
+from turtle import left
 import pygame as pg
 
 # pygame setup
@@ -21,6 +22,7 @@ PADDLE_WIDTH, PADDLE_HEIGHT = 10, 90
 
 class Paddle:
     COLOR = WHITE
+    SPEED = 5
 
     def __init__(self, x, y, width, height):
         self.x = x
@@ -30,10 +32,14 @@ class Paddle:
 
     def draw(self, win):
         pg.draw.rect(win, self.COLOR, (self.x, self.y, self.width, self.height))
+
+    def move(self, up=True):
+        if up:
+            self.y -= self.SPEED
+        else:
+            self.y += self.SPEED
+
          
-
-
-
 def draw(win, paddles):
     win.fill('black')
 
@@ -41,7 +47,19 @@ def draw(win, paddles):
         paddle.draw(win)
 
     pg.display.update()
+
+def hande_paddle_movement(keys, left_paddle, right_paddle):
+    if keys[pg.K_w] and left_paddle.y >= 0:
+        left_paddle.move()
+    if keys[pg.K_s] and left_paddle.y + left_paddle.height <= HEIGHT:
+        left_paddle.move(up=False)
+
+    if keys[pg.K_UP] and right_paddle.y >= 0:
+        right_paddle.move()
+    if keys[pg.K_DOWN] and right_paddle.y + right_paddle.height <= HEIGHT:
+        right_paddle.move(up=False)
     
+
 
 def main():
     run = True
@@ -56,8 +74,11 @@ def main():
     
         for event in pg.event.get():
             if event.type == pg.QUIT:
-                run = FALSE
+                run = False
                 break
+        
+        keys = pg.key.get_pressed()
+        hande_paddle_movement(keys, left_paddle, right_paddle)
 
     pg.quit()
 
