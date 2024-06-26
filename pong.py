@@ -46,7 +46,12 @@ def draw(win, paddles):
     for paddle in paddles:
         paddle.draw(win)
 
+    for i in range(10, HEIGHT, HEIGHT//20):
+        if i % 2 == 0:
+            pg.draw.rect(win, WHITE, (WIDTH//2, i, 5, HEIGHT//20))  
+
     pg.display.update()
+
 
 def hande_paddle_movement(keys, left_paddle, right_paddle):
     if keys[pg.K_w] and left_paddle.y >= 0:
@@ -59,7 +64,6 @@ def hande_paddle_movement(keys, left_paddle, right_paddle):
     if keys[pg.K_DOWN] and right_paddle.y + right_paddle.height <= HEIGHT:
         right_paddle.move(up=False)
     
-
 
 def main():
     run = True
