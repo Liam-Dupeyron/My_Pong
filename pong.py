@@ -2,6 +2,7 @@
 # By Liam Dupeyron
 
 from multiprocessing import reduction
+import re
 from sre_parse import WHITESPACE
 from struct import pack
 from tkinter import LEFT
@@ -22,13 +23,15 @@ BLACK = (0, 0, 0)
 PADDLE_WIDTH, PADDLE_HEIGHT = 10, 100
 BALL_RADIUS = 7
 
+SCORE_FONT = pg.font.SysFont('silom', 50)
+
 class Paddle:
     COLOR = WHITE
     SPEED = 6
 
     def __init__(self, x, y, width, height):
-        self.x = x
-        self.y = y
+        self.x = self.original_x = x
+        self.y = self.original_y = y
         self.width = width
         self.height = height
 
@@ -43,12 +46,16 @@ class Paddle:
             # Move paddle downwards
             self.y += self.SPEED
 
+    def reset(self):
+        self.x = self.original_x
+        self.y = self.original_y
+
 class Ball:
     MAX_SPEED = 7
     COLOR = WHITE
     def __init__(self, x, y, radius):
-        self.x = x
-        self.y = y
+        self.x = self.original_x = x
+        self.y = self.original_y = y
         self.radius = radius
         self.x_speed = self.MAX_SPEED
         self.y_speed = 0
@@ -60,8 +67,21 @@ class Ball:
         self.x += self.x_speed
         self.y += self.y_speed
 
-def draw(win, paddles, ball):
+    def reset(self):
+        pg.time.wait(500)
+        self.x = self.original_x
+        self.y = self.original_y
+        self.x_speed *= -1
+        self.y_speed = 0
+
+def draw(win, paddles, ball, left_score, right_score):
     win.fill('black')
+    # Draw the score
+    left_score_text = SCORE_FONT.render(f"{left_score}", 1, WHITE)
+    right_score_text = SCORE_FONT.render(f"{right_score}", 1, WHITE)
+    win.blit(left_score_text, (WIDTH // 4, 20))
+    win.blit(right_score_text, (WIDTH * (3/4), 20))
+
 
     # Draw paddles
     for paddle in paddles:
@@ -131,9 +151,12 @@ def main():
     right_paddle = Paddle(WIDTH - 10 - PADDLE_WIDTH,(HEIGHT//2) - (PADDLE_HEIGHT//2), PADDLE_WIDTH, PADDLE_HEIGHT)
     ball = Ball(WIDTH//2, HEIGHT//2, BALL_RADIUS)
 
+    left_score = 0
+    right_score = 0
+
     while run:
         clock.tick(FPS)
-        draw(WIN, [left_paddle, right_paddle], ball)
+        draw(WIN, [left_paddle, right_paddle], ball, left_score, right_score)
     
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -146,6 +169,18 @@ def main():
         ball.move()
         handle_collision(ball, left_paddle, right_paddle)
 
+        if ball.x < 0:
+            right_score += 1
+            ball.reset()
+            left_paddle.reset()
+            right_paddle.reset()
+            
+        elif ball.x > WIDTH:
+            left_score += 1
+            ball.reset()
+            left_paddle.reset()
+            right_paddle.reset()
+            
     pg.quit()
 
 if __name__ == '__main__':
