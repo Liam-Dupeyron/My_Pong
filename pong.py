@@ -11,7 +11,7 @@ import pygame as pg
 
 # pygame setup
 pg.init()
-WIDTH, HEIGHT = 800, 500
+WIDTH, HEIGHT = 700, 500
 WIN = pg.display.set_mode((WIDTH, HEIGHT))
 pg.display.set_caption('Pong')
 
@@ -24,6 +24,7 @@ PADDLE_WIDTH, PADDLE_HEIGHT = 10, 100
 BALL_RADIUS = 7
 
 SCORE_FONT = pg.font.SysFont('silom', 50)
+WINNING_SCORE = 2
 
 class Paddle:
     COLOR = WHITE
@@ -68,7 +69,7 @@ class Ball:
         self.y += self.y_speed
 
     def reset(self):
-        pg.time.wait(500)
+        pg.time.delay(500)
         self.x = self.original_x
         self.y = self.original_y
         self.x_speed *= -1
@@ -181,6 +182,26 @@ def main():
             left_paddle.reset()
             right_paddle.reset()
             
+        won = False
+        if left_score >= WINNING_SCORE:
+            won = True
+            win_text = "Left Player Won!"
+        elif right_score >= WINNING_SCORE:
+            won = True
+            win_text = "Right Player Won!"
+        
+        if won == True:
+            text = SCORE_FONT.render(win_text, 1, WHITE)
+            WIN.blit(text, (WIDTH // 2 - text.get_width()//2, HEIGHT * (1/4)))
+            pg.display.update()
+            pg.time.delay(3000)
+            ball.reset()
+            left_paddle.reset()
+            right_paddle.reset()
+            left_score = 0
+            right_score = 0
+
+
     pg.quit()
 
 if __name__ == '__main__':
