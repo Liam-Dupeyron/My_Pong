@@ -19,7 +19,7 @@ FPS = 60
 
 CRASH_SOUND = pg.mixer.Sound("/Users/liamdupeyron/Desktop/My_Pong/sound_effects/zap.mp3")
 TRUMPETS = pg.mixer.Sound("/Users/liamdupeyron/Desktop/My_Pong/sound_effects/winning_trumpet.mp3")
-
+SCORE = pg.mixer.Sound("/Users/liamdupeyron/Desktop/My_Pong/sound_effects/score.mp3")
 
 WHITE = (225, 225, 225)
 BLACK = (0, 0, 0)
@@ -28,7 +28,7 @@ PADDLE_WIDTH, PADDLE_HEIGHT = 10, 100
 BALL_RADIUS = 7
 
 SCORE_FONT = pg.font.SysFont('silom', 50)
-WINNING_SCORE = 1
+WINNING_SCORE = 4
 
 class Paddle:
     COLOR = WHITE
@@ -177,12 +177,14 @@ def main():
         handle_collision(ball, left_paddle, right_paddle)
 
         if ball.x < 0:
+            pg.mixer.Sound.play(SCORE)
             right_score += 1
             ball.reset()
             left_paddle.reset()
             right_paddle.reset()
             
         elif ball.x > WIDTH:
+            pg.mixer.Sound.play(SCORE)
             left_score += 1
             ball.reset()
             left_paddle.reset()
