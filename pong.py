@@ -17,8 +17,8 @@ pg.display.set_caption('Pong')
 
 FPS = 60
 
-CRASH_SOUND = pg.mixer.Sound("zap.mp3")
-TRUMPETS = pg.mixer.Sound("winning_trumpet.mp3")
+CRASH_SOUND = pg.mixer.Sound("/Users/liamdupeyron/Desktop/My_Pong/sound_effects/zap.mp3")
+TRUMPETS = pg.mixer.Sound("/Users/liamdupeyron/Desktop/My_Pong/sound_effects/winning_trumpet.mp3")
 
 
 WHITE = (225, 225, 225)
