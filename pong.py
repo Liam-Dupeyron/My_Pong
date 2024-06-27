@@ -17,6 +17,10 @@ pg.display.set_caption('Pong')
 
 FPS = 60
 
+CRASH_SOUND = pg.mixer.Sound("zap.mp3")
+TRUMPETS = pg.mixer.Sound("winning_trumpet.mp3")
+
+
 WHITE = (225, 225, 225)
 BLACK = (0, 0, 0)
 
@@ -24,7 +28,7 @@ PADDLE_WIDTH, PADDLE_HEIGHT = 10, 100
 BALL_RADIUS = 7
 
 SCORE_FONT = pg.font.SysFont('silom', 50)
-WINNING_SCORE = 2
+WINNING_SCORE = 1
 
 class Paddle:
     COLOR = WHITE
@@ -124,6 +128,7 @@ def handle_collision(ball, left_paddle, right_paddle):
     if ball.x_speed < 0:
         if ball.y >= left_paddle.y and ball.y <= left_paddle.y + left_paddle.height:
             if ball.x - ball.radius <= left_paddle.x + left_paddle.width:
+                pg.mixer.Sound.play(CRASH_SOUND)
                 ball.x_speed *= -1
 
                 middle_y = left_paddle.y + left_paddle.height / 2
@@ -136,6 +141,7 @@ def handle_collision(ball, left_paddle, right_paddle):
     else:
         if ball.y >= right_paddle.y and ball.y <= right_paddle.y + right_paddle.height:
             if ball.x + ball.radius >= right_paddle.x:
+                pg.mixer.Sound.play(CRASH_SOUND)
                 ball.x_speed *= -1
 
                 middle_y = right_paddle.y + right_paddle.height / 2
@@ -194,7 +200,8 @@ def main():
             text = SCORE_FONT.render(win_text, 1, WHITE)
             WIN.blit(text, (WIDTH // 2 - text.get_width()//2, HEIGHT * (1/4)))
             pg.display.update()
-            pg.time.delay(3000)
+            pg.mixer.Sound.play(TRUMPETS)
+            pg.time.delay(3100)
             ball.reset()
             left_paddle.reset()
             right_paddle.reset()
