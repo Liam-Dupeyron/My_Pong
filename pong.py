@@ -1,6 +1,7 @@
 # A simple Pong terminal game for when I have no internet
 # By Liam Dupeyron
 
+from multiprocessing import reduction
 from sre_parse import WHITESPACE
 from struct import pack
 from tkinter import LEFT
@@ -18,12 +19,12 @@ FPS = 60
 WHITE = (225, 225, 225)
 BLACK = (0, 0, 0)
 
-PADDLE_WIDTH, PADDLE_HEIGHT = 10, 80
+PADDLE_WIDTH, PADDLE_HEIGHT = 10, 100
 BALL_RADIUS = 7
 
 class Paddle:
     COLOR = WHITE
-    SPEED = 4
+    SPEED = 6
 
     def __init__(self, x, y, width, height):
         self.x = x
@@ -43,7 +44,7 @@ class Paddle:
             self.y += self.SPEED
 
 class Ball:
-    MAX_SPEED = 5
+    MAX_SPEED = 7
     COLOR = WHITE
     def __init__(self, x, y, radius):
         self.x = x
@@ -103,11 +104,24 @@ def handle_collision(ball, left_paddle, right_paddle):
         if ball.y >= left_paddle.y and ball.y <= left_paddle.y + left_paddle.height:
             if ball.x - ball.radius <= left_paddle.x + left_paddle.width:
                 ball.x_speed *= -1
+
+                middle_y = left_paddle.y + left_paddle.height / 2
+                difference_in_y = middle_y - ball.y 
+                reduction_factor = (left_paddle.height / 2) / ball.MAX_SPEED
+                y_speed = difference_in_y / reduction_factor
+                ball.y_speed = -1 * y_speed
+
     # Right-paddle collision
     else:
         if ball.y >= right_paddle.y and ball.y <= right_paddle.y + right_paddle.height:
             if ball.x + ball.radius >= right_paddle.x:
                 ball.x_speed *= -1
+
+                middle_y = right_paddle.y + right_paddle.height / 2
+                difference_in_y = middle_y - ball.y 
+                reduction_factor = (right_paddle.height / 2) / ball.MAX_SPEED
+                y_speed = difference_in_y / reduction_factor
+                ball.y_speed = -1 *  y_speed
 
 def main():
     run = True
